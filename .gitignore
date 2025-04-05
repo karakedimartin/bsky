@@ -1,0 +1,4 @@
+.env
+tayyipci_listesi.txt
+__pycache__/
+*.pyc 
