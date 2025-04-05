@@ -1,14 +1,19 @@
-# Bluesky Politik Görüş Analiz Betiği (`bsanalyze.py`)
+# Bluesky Detaylı Takip Edilen Analiz Betiği (`bsanalyze.py`)
 
-Bu betik, Bluesky sosyal ağında takip ettiğiniz kişilerin profil yazılarını ve son gönderilerini/yanıtlarını analiz etmek için bilgisayarınızda yerel olarak çalışan bir yapay zeka dil modeli (LLM) olan Ollama'yı kullanır. Betiğin amacı, belirli bir politik görüşe (bu örnekte AKP/Erdoğan destekçisi) sahip olma olasılığı yüksek olan kullanıcıları tespit etmektir.
+Bu betik, Bluesky sosyal ağında takip ettiğiniz kişilerin profil yazılarını ve son gönderilerini/yanıtlarını analiz etmek için bilgisayarınızda yerel olarak çalışan bir yapay zeka dil modeli (LLM) olan Ollama'yı kullanır. Betik, kullanıcıları belirli kriterlere göre **detaylı olarak** değerlendirir:
+
+*   Konuşulan dil (Türkçe mi?)
+*   Laik/Seküler/Atatürkçü duruş belirtileri (Pozitif)
+*   AKP/Erdoğan destekçisi duruş belirtileri (Negatif)
+*   Şeriat yanlısı/Aşırı Muhafazakar duruş belirtileri (Negatif)
 
 **>> BU BETİK OTOMATİK OLARAK KİMSEYİ TAKİPTEN ÇIKARMAZ! <<**
 
-Bu betik **yalnızca analiz yapar**. Potansiyel destekçi olarak tanımladığı kullanıcıların listesini ekranda gösterir ve betiğin çalıştığı klasörde `tayyipci_listesi.txt` adlı bir dosyaya kaydeder. Bu listeyi inceleyip, isterseniz manuel olarak işlem yapabilirsiniz.
+Bu betik **yalnızca analiz yapar**. Her bir takip edilen kullanıcı için analiz sonuçlarını ekranda gösterir ve betiğin çalıştığı klasörde **`analiz_sonuclari.txt`** adlı bir dosyaya detaylı olarak kaydeder. Bu dosyayı inceleyip, takip listeniz hakkında daha detaylı bir fikir edinebilirsiniz.
 
 ## !!! ÇOK ÖNEMLİ UYARILAR !!!
 
-*   **LLM ANALİZİ DENEYSELDİR VE HATALIDIR:** Yapay zeka analizi **kesin değildir** ve **%100 doğru sonuç vermez**. Kullanıcıları yanlışlıkla politik görüşleri nedeniyle işaretleyebilir veya gerçek destekçileri gözden kaçırabilir. Analiz, kullanıcının son ~25 gönderisi/yanıtı, görünen adı ve profil açıklamasına dayanır; bu bilgiler kişinin görüşlerini tam olarak yansıtmayabilir. Sarkazm, ironi veya karmaşık ifadeler yapay zeka tarafından yanlış yorumlanabilir. **Bu betiğin çıktısını yalnızca bir ipucu olarak kullanın ve sonuçlara dayanarak işlem yapmadan önce mutlaka kendiniz de profilleri kontrol edin.**
+*   **LLM ANALİZİ DENEYSELDİR VE HATALIDIR:** Yapay zeka analizi **kesin değildir** ve **%100 doğru sonuç vermez**. Özellikle politik ve dünya görüşü gibi karmaşık ve nüanslı konuları değerlendirirken **hatalar yapacaktır**. İroni, alay, alıntılar veya bağlam dışı ifadeler yanlış yorumlanabilir. **Bu betiğin çıktısını yalnızca bir ipucu ve başlangıç noktası olarak kullanın. Sonuçlara dayanarak kesin yargılara varmadan veya manuel işlem yapmadan önce mutlaka kendiniz de profilleri dikkatlice kontrol edin.**
 *   **ÇOK YAVAŞ ÇALIŞMA:** LLM analizi, özellikle çok sayıda kişiyi takip ediyorsanız **çok yavaş çalışacaktır**. Betik, takip ettiğiniz her kullanıcı için profil bilgilerini ve gönderilerini Bluesky'den almalı, ardından bu bilgileri bilgisayarınızdaki Ollama yapay zeka modeline gönderip yanıtını beklemelidir. Bu süreç, takip ettiğiniz kişi sayısına ve bilgisayarınızın işlem gücüne bağlı olarak **saatler sürebilir**.
 *   **YEREL LLM GEREKLİ:** Bu betiği kullanmak için bilgisayarınızda **Ollama yazılımının kurulu ve çalışır durumda olması** ve analiz için uygun bir dil modelinin (örneğin `llama3`, `mistral` gibi Türkçe anlayabilen bir model) indirilmiş olması **zorunludur**.
 *   **GÜVENLİK:** Bluesky şifrenizi içeren `.env` dosyasını **güvende tutun** ve kimseyle paylaşmayın.
@@ -89,14 +94,14 @@ Betik, Bluesky giriş bilgilerinizi ve Ollama ayarlarınızı güvenli bir şeki
     *   **Linux:** Metin düzenleyici kullanın (örn. `gedit .env` veya terminalde `nano .env`).
 3.  Oluşturduğunuz bu boş metin dosyasını açın ve içine **tam olarak** aşağıdaki satırları kopyalayıp yapıştırın:
     ```dotenv
-    BLUESKY_USERNAME="SENİN_KULLANICI_ADIN_BURAYA"
-    BLUESKY_PASSWORD="SENİN_ŞİFREN_BURAYA"
+    BLUESKY_USERNAME="SENIN_BLUESKY_KULLANICI_ADIN"
+    BLUESKY_PASSWORD="SENIN_BLUESKY_UYGULAMA_SIFREN_VEYA_GIRIS_SIFREN"
     OLLAMA_BASE_URL="http://localhost:11434"
     OLLAMA_MODEL="llama3"
     ```
 4.  **Bu satırları kendi bilgilerinizle değiştirin:**
-    *   `"SENİN_KULLANICI_ADIN_BURAYA"` yazan yeri, tırnak işaretlerini koruyarak kendi Bluesky **kullanıcı adınızla** (handle, örn. `"ornek.bsky.social"`) değiştirin.
-    *   `"SENİN_ŞİFREN_BURAYA"` yazan yeri, tırnak işaretlerini koruyarak kendi Bluesky **şifrenizle** değiştirin. (Güvenlik için uygulama şifresi (App Password) kullanmanız önerilir, eğer oluşturduysanız onu yazın).
+    *   `"SENIN_BLUESKY_KULLANICI_ADIN"` yazan yeri, tırnak işaretlerini koruyarak kendi Bluesky **kullanıcı adınızla** (handle, örn. `"ornek.bsky.social"`) değiştirin.
+    *   `"SENIN_BLUESKY_UYGULAMA_SIFREN_VEYA_GIRIS_SIFREN"` yazan yeri, tırnak işaretlerini koruyarak kendi Bluesky **şifrenizle** değiştirin. (Güvenlik için uygulama şifresi (App Password) kullanmanız önerilir, eğer oluşturduysanız onu yazın).
     *   `OLLAMA_BASE_URL="http://localhost:11434"` satırını genellikle değiştirmeniz gerekmez. Ollama varsayılan olarak bu adreste çalışır.
     *   `OLLAMA_MODEL="llama3"` satırındaki `llama3` kısmını, Adım 2'de indirdiğiniz ve kullanmak istediğiniz Ollama modelinin adıyla (örn. `mistral`) değiştirin. Model adını doğru yazdığınızdan emin olun.
 5.  **Dosyayı `.env` olarak kaydedin:**
@@ -121,16 +126,16 @@ Artık her şey hazır, betiği çalıştırabiliriz.
     ```
     *   Eğer `python` komutu bulunamadı hatası verirse, Windows'ta `py bsanalyze.py`, Linux'ta `python3 bsanalyze.py` deneyin.
 5.  **İşlemi İzleyin:**
-    *   Betik önce Ollama'ya bağlanmayı deneyecek, sonra Bluesky'e giriş yapacak ve takip ettiğiniz kişileri listelemeye başlayacaktır.
-    *   Ardından her bir kullanıcı için analiz sürecini başlatacaktır. Ekranda hangi kullanıcının analiz edildiğini, Ollama'dan gelen yanıtı (`EVET` veya `HAYIR`) göreceksiniz.
-    *   Eğer bir kullanıcı potansiyel destekçi olarak işaretlenirse (`EVET` yanıtı gelirse), `[!] Bir TAYYIPCI bulundu: [kullanıcı_adı]` mesajı görünecek ve kullanıcı adı `tayyipci_listesi.txt` dosyasına eklenecektir.
+    *   Betik önce Ollama'ya bağlanmayı deneyecek, sonra Bluesky'e giriş yapacak ve takip ettiğiniz kişileri listeleyecektir.
+    *   Ardından her bir kullanıcı için **detaylı analiz** sürecini başlatacaktır. Ekranda hangi kullanıcının analiz edildiğini ve Ollama'dan gelen detaylı yanıtı (Dil, Pozitif_Laik, Negatif_AKP, Negatif_Seriat) göreceksiniz.
     *   Bu işlem takip ettiğiniz kişi sayısına bağlı olarak **uzun sürebilir**. Sabırlı olun.
-    *   İşlem bittiğinde, toplam kaç kişinin analiz edildiğini ve kaçının potansiyel destekçi olarak işaretlendiğini özetleyen bir rapor göreceksiniz.
+    *   İşlem bittiğinde, analiz edilen kullanıcı sayısı ve hata sayısı özetlenecektir.
 
 ### Adım 7: Sonuçları İnceleme
 
-*   Betik bittikten sonra, betiğin çalıştığı klasörde `tayyipci_listesi.txt` adlı bir dosya bulacaksınız. Bu dosyayı bir metin düzenleyici ile açarak potansiyel destekçi olarak işaretlenen kullanıcıların listesini görebilirsiniz.
-*   **Unutmayın:** Bu liste yalnızca yapay zekanın tahminidir ve hatalı olabilir. Listeyi dikkatlice inceleyin.
+*   Betik bittikten sonra, betiğin çalıştığı klasörde **`analiz_sonuclari.txt`** adlı bir dosya bulacaksınız.
+*   Bu dosyayı bir metin düzenleyici ile açarak **her bir takip ettiğiniz kullanıcı için detaylı analiz sonuçlarını** (Dil, Pozitif_Laik, Negatif_AKP, Negatif_Seriat) görebilirsiniz.
+*   **Unutmayın:** Bu analizler yapay zeka tahminidir ve hatalı olabilir. Listeyi ve sonuçları dikkatlice inceleyin.
 
 ## Notlar
 
